@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiếng Anh 7: Unit 3 - Vocabulary Exercises 1 & 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Falling Snowflakes Animation */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: fall linear infinite;
+            z-index: 1;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10px) translateX(0); }
+            100% { transform: translateY(105vh) translateX(30px); }
+        }
+
+        /* Fireworks Canvas */
+        #fireworks-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .card-shadow {
+            box-shadow: 0 12px 30px -5px rgba(27, 94, 32, 0.2), 0 8px 12px -6px rgba(27, 94, 32, 0.1);
+        }
+
+        @keyframes bounce-short {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-bounce-short {
+            animation: bounce-short 1s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="flex flex-col justify-between text-gray-800 relative selection:bg-emerald-200">
+
+    <!-- Canvas for Fireworks Effects -->
+    <canvas id="fireworks-canvas"></canvas>
+
+    <!-- Snowflake Animation Container -->
+    <div id="snow-container" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+    <!-- Header Navigation -->
+    <header class="w-full bg-emerald-800 text-white py-4 px-6 shadow-xl z-10 flex flex-wrap justify-between items-center sticky top-0 backdrop-blur-md bg-opacity-95 border-b border-emerald-600">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-emerald-600 rounded-2xl flex items-center justify-center text-2xl shadow-inner">
+                📚
+            </div>
+            <div>
+                <h1 class="text-xl md:text-2xl font-black tracking-tight text-white">Tiếng Anh 7: Global Success</h1>
+                <p class="text-xs text-emerald-200 font-medium hidden sm:block">Unit 3: Community Service — Vocabulary (Bài 1 & Bài 2)</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-3 mt-2 sm:mt-0">
+            <div id="mode-badge" class="bg-emerald-950/80 border border-emerald-500 px-3 py-1 rounded-full text-xs font-semibold text-emerald-200 shadow-sm">
+                Chế độ: Bài 1 - Nối từ (Match)
+            </div>
+            <div class="bg-amber-400 text-emerald-950 font-black px-4 py-1.5 rounded-full text-sm shadow-md flex items-center space-x-1">
+                <span>⭐ Điểm:</span>
+                <span id="score-display" class="text-lg">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mode Selector Buttons -->
+    <div class="w-full max-w-4xl mx-auto px-4 mt-6 z-10 flex flex-wrap justify-center gap-3">
+        <button id="tab-ex1" onclick="switchMode('ex1')" class="px-5 py-2.5 rounded-2xl font-bold text-sm sm:text-base shadow-md transition transform active:scale-95 cursor-pointer bg-emerald-600 text-white border-2 border-emerald-500">
+            🔗 Bài 1: Nối A với B (Match)
+        </button>
+        <button id="tab-ex2" onclick="switchMode('ex2')" class="px-5 py-2.5 rounded-2xl font-bold text-sm sm:text-base shadow-md transition transform active:scale-95 cursor-pointer bg-white text-emerald-800 border-2 border-emerald-200 hover:bg-emerald-50">
+            📝 Bài 2: Điền từ vào câu (Complete)
+        </button>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow flex items-center justify-center p-4 my-2 z-10">
+        <div class="w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-3xl card-shadow p-5 sm:p-8 transition-all duration-300 border border-emerald-100">
+
+            <!-- ================= EXERCISE 1: MATCHING A WITH B ================= -->
+            <div id="ex1-mode-view" class="block">
+                <div class="text-center mb-6">
+                    <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">Unit 3 • Vocabulary</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-emerald-900 mt-2">1. Match a verb in A with a word or phrase in B 🔗</h2>
+                    <p class="text-sm text-gray-600 mt-1">Chạm vào một động từ ở Cột A, sau đó chọn từ/cụm từ phù hợp ở Cột B để ghép đôi!</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Column A (Verbs) -->
+                    <div class="bg-emerald-50/70 border-2 border-emerald-200 rounded-2xl p-4 shadow-inner">
+                        <h3 class="text-center font-black text-emerald-900 border-b border-emerald-200 pb-2 mb-4 text-lg">Cột A (Động từ)</h3>
+                        <div id="col-a-container" class="space-y-3">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Column B (Phrases) -->
+                    <div class="bg-amber-50/70 border-2 border-amber-200 rounded-2xl p-4 shadow-inner">
+                        <h3 class="text-center font-black text-amber-900 border-b border-amber-200 pb-2 mb-4 text-lg">Cột B (Cụm từ)</h3>
+                        <div id="col-b-container" class="space-y-3">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="ex1-feedback-box" class="hidden p-4 rounded-2xl mb-6 text-sm font-medium text-center border"></div>
+
+                <div class="flex justify-center">
+                    <button id="reset-ex1-btn" onclick="resetEx1()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg px-8 py-3.5 rounded-full shadow-lg transition transform active:scale-95 cursor-pointer flex items-center space-x-2">
+                        <span>Làm lại Bài 1 🔄</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ================= EXERCISE 2: FILL SENTENCES ================= -->
+            <div id="ex2-mode-view" class="hidden">
+                <div class="text-center mb-6">
+                    <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">Unit 3 • Vocabulary</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-emerald-900 mt-2">2. Complete each sentence with a suitable word/phrase from the box 📝</h2>
+                    <p class="text-sm text-gray-600 mt-1">Chọn từ ở khung bên dưới rồi chạm vào ô trống thích hợp trong câu!</p>
+                </div>
+
+                <!-- Word Box -->
+                <div class="bg-amber-50 border-2 border-amber-200 p-4 rounded-2xl mb-8 text-center shadow-inner">
+                    <p class="text-xs font-extrabold text-amber-900 uppercase tracking-wider mb-2">Khung từ vựng (Word Box):</p>
+                    <div id="ex2-word-bank" class="flex flex-wrap justify-center gap-2 sm:gap-3">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Sentences List -->
+                <div id="ex2-sentences-container" class="space-y-4 mb-8">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <div id="ex2-feedback-box" class="hidden p-4 rounded-2xl mb-6 text-sm font-medium text-center border"></div>
+
+                <div class="flex justify-center">
+                    <button id="check-ex2-btn" onclick="checkEx2Answers()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg px-8 py-3.5 rounded-full shadow-lg transition transform active:scale-95 cursor-pointer flex items-center space-x-2">
+                        <span>Check Answers (Kiểm tra) ✅</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full text-center py-4 text-xs text-emerald-900 bg-emerald-100/80 font-semibold z-10 border-t border-emerald-200">
+        Game Tương Tác Tiếng Anh 7 • Unit 3: Community Service (SGK Global Success) ❄️🌱
+    </footer>
+
+    <script>
+        /* ================= DATA SOURCE ================= */
+        // EXERCISE 1 DATA
+        const ex1Data = [
+            { id: 1, verb: "1. donate", matchLetter: "e", phrase: "e. books", full: "donate books", vi: "quên góp sách" },
+            { id: 2, verb: "2. exchange", matchLetter: "a", phrase: "a. used paper for notebooks", full: "exchange used paper for notebooks", vi: "đổi giấy cũ lấy vở" },
+            { id: 3, verb: "3. water", matchLetter: "d", phrase: "d. plants", full: "water plants", vi: "tưới cây" },
+            { id: 4, verb: "4. pick up", matchLetter: "c", phrase: "c. litter", full: "pick up litter", vi: "nhặt rác" },
+            { id: 5, verb: "5. tutor", matchLetter: "b", phrase: "b. primary students", full: "tutor primary students", vi: "dạy kèm học sinh tiểu học" }
+        ];
+
+        // EXERCISE 2 DATA
+        const ex2Words = ["tutor", "litter", "water", "donate", "used paper for notebooks"];
+
+        const ex2Sentences = [
+            { id: 1, prefix: "1. We pick up ", answer: "litter", suffix: " at the local park every Sunday.", vi: "Chúng tôi nhặt rác ở công viên địa phương vào mỗi Chủ Nhật." },
+            { id: 2, prefix: "2. Children in our village exchange ", answer: "used paper for notebooks", suffix: " every school year.", vi: "Trẻ em ở làng chúng tôi đổi giấy cũ lấy vở vào mỗi năm học." },
+            { id: 3, prefix: "3. Tom and his friends ", answer: "water", suffix: " the plants in their neighbourhood every weekend.", vi: "Tom và các bạn tưới cây ở khu phố của họ vào mỗi cuối tuần." },
+            { id: 4, prefix: "4. We ", answer: "donate", suffix: " old textbooks to children in rural areas.", vi: "Chúng tôi quyên góp sách giáo khoa cũ cho trẻ em vùng nông thôn." },
+            { id: 5, prefix: "5. Minh and his friends often ", answer: "tutor", suffix: " small children in their village.", vi: "Minh và các bạn thường dạy kèm trẻ em nhỏ trong làng." }
+        ];
+
+        /* ================= GAME STATE ================= */
+        let totalScore = 0;
+
+        // Ex 1 state
+        let selectedA = null; // selected id from Column A
+        let ex1Matches = {};  // { 1: 'e', 2: 'a', ... }
+
+        // Ex 2 state
+        let selectedWordEx2 = null;
+        let ex2UserAnswers = {}; // { 1: "litter", ... }
+
+        /* ================= AUDIO SYNTHESIS ================= */
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                const now = audioCtx.currentTime;
+
+                if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.12); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.24); // G5
+                    osc.frequency.setValueAtTime(1046.50, now + 0.36); // C6
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+                    osc.start(now);
+                    osc.stop(now + 0.7);
+                } else if (type === 'incorrect') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(329.63, now); // E4
+                    osc.frequency.setValueAtTime(293.66, now + 0.2); // D4
+                    osc.frequency.setValueAtTime(349.23, now + 0.4); // F4
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+                    osc.start(now);
+                    osc.stop(now + 0.6);
+                } else if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, now);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                }
+            } catch (e) {
+                console.log("Audio play error", e);
+            }
+        }
+
+        /* ================= FIREWORKS ENGINE ================= */
+        const canvas = document.getElementById('fireworks-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function createFirework(x, y) {
+            const colors = ['#22c55e', '#10b981', '#f59e0b', '#3b82f6', '#ec4899', '#8b5cf6'];
+            const particleCount = 55;
+            for (let i = 0; i < particleCount; i++) {
+                const angle = (Math.PI * 2 / particleCount) * i;
+                const speed = Math.random() * 6 + 2;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    radius: Math.random() * 3 + 2,
+                    alpha: 1,
+                    decay: Math.random() * 0.02 + 0.015
+                });
+            }
+        }
+
+        function animateFireworks() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.05;
+                p.alpha -= p.decay;
+
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                } else {
+                    ctx.save();
+                    ctx.globalAlpha = p.alpha;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+            requestAnimationFrame(animateFireworks);
+        }
+        animateFireworks();
+
+        function triggerVictoryFireworks() {
+            createFirework(canvas.width * 0.3, canvas.height * 0.4);
+            setTimeout(() => createFirework(canvas.width * 0.7, canvas.height * 0.3), 150);
+            setTimeout(() => createFirework(canvas.width * 0.5, canvas.height * 0.5), 300);
+        }
+
+        /* ================= SNOW ENGINE ================= */
+        function initSnow() {
+            const container = document.getElementById('snow-container');
+            const totalSnowflakes = 25;
+            for (let i = 0; i < totalSnowflakes; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                const size = Math.random() * 6 + 4 + 'px';
+                flake.style.width = size;
+                flake.style.height = size;
+                flake.style.left = Math.random() * 100 + 'vw';
+                flake.style.opacity = Math.random() * 0.7 + 0.3;
+                flake.style.animationDuration = Math.random() * 6 + 5 + 's';
+                flake.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(flake);
+            }
+        }
+
+        /* ================= EXERCISE 1 LOGIC ================= */
+        function renderEx1() {
+            const colA = document.getElementById('col-a-container');
+            const colB = document.getElementById('col-b-container');
+            colA.innerHTML = '';
+            colB.innerHTML = '';
+
+            // Render Col A
+            ex1Data.forEach(item => {
+                const isSelected = selectedA === item.id;
+                const matchedLetter = ex1Matches[item.id];
+
+                const btn = document.createElement('button');
+                btn.className = `w-full p-3.5 rounded-xl text-left font-bold text-sm sm:text-base border-2 transition cursor-pointer flex justify-between items-center shadow-sm ${
+                    isSelected 
+                    ? 'bg-emerald-600 text-white border-emerald-700 ring-2 ring-emerald-300 scale-102' 
+                    : matchedLetter 
+                        ? 'bg-emerald-100 text-emerald-950 border-emerald-400 font-extrabold' 
+                        : 'bg-white text-gray-800 border-emerald-200 hover:bg-emerald-50'
+                }`;
+                btn.innerHTML = `
+                    <span>${item.verb}</span>
+                    <span class="text-xs px-2.5 py-1 rounded-full ${matchedLetter ? 'bg-emerald-600 text-white' : 'bg-gray-100 text-gray-500'} font-bold">
+                        ${matchedLetter ? `➡️ ${matchedLetter}` : 'Chọn'}
+                    </span>
+                `;
+                btn.onclick = () => {
+                    playSound('click');
+                    selectedA = (selectedA === item.id) ? null : item.id;
+                    renderEx1();
+                };
+                colA.appendChild(btn);
+            });
+
+            // Shuffle Col B display order once or keep consistent order (a, b, c, d, e)
+            const bItems = [
+                { letter: 'a', text: 'a. used paper for notebooks' },
+                { letter: 'b', text: 'b. primary students' },
+                { letter: 'c', text: 'c. litter' },
+                { letter: 'd', text: 'd. plants' },
+                { letter: 'e', text: 'e. books' }
+            ];
+
+            bItems.forEach(b => {
+                // Find if any item in A has matched with this letter
+                const matchedAId = Object.keys(ex1Matches).find(key => ex1Matches[key] === b.letter);
+
+                const btn = document.createElement('button');
+                btn.className = `w-full p-3.5 rounded-xl text-left font-bold text-sm sm:text-base border-2 transition cursor-pointer flex justify-between items-center shadow-sm ${
+                    matchedAId 
+                    ? 'bg-amber-200 text-amber-950 border-amber-400 font-extrabold' 
+                    : 'bg-white text-gray-800 border-amber-200 hover:bg-amber-100'
+                }`;
+                btn.innerHTML = `
+                    <span>${b.text}</span>
+                    <span class="text-xs px-2 py-1 rounded-md ${matchedAId ? 'bg-amber-600 text-white' : 'bg-amber-100 text-amber-800'} font-bold">
+                        ${matchedAId ? `Đã ghép (${matchedAId})` : 'Ghép ⬅️'}
+                    </span>
+                `;
+                btn.onclick = () => {
+                    playSound('click');
+                    if (selectedA) {
+                        ex1Matches[selectedA] = b.letter;
+                        selectedA = null;
+                        checkEx1Auto();
+                    } else {
+                        // Alert user to select A first
+                        const feedbackBox = document.getElementById('ex1-feedback-box');
+                        feedbackBox.className = "p-3 rounded-2xl mb-4 text-sm font-bold border bg-amber-100 border-amber-300 text-amber-900 block";
+                        feedbackBox.innerText = "💡 Vui lòng chọn một động từ ở Cột A trước!";
+                        feedbackBox.classList.remove('hidden');
+                    }
+                    renderEx1();
+                };
+                colB.appendChild(btn);
+            });
+        }
+
+        function checkEx1Auto() {
+            const feedbackBox = document.getElementById('ex1-feedback-box');
+            const totalMatches = Object.keys(ex1Matches).length;
+
+            if (totalMatches === ex1Data.length) {
+                let correctCount = 0;
+                ex1Data.forEach(item => {
+                    if (ex1Matches[item.id] === item.matchLetter) {
+                        correctCount++;
+                    }
+                });
+
+                if (correctCount === ex1Data.length) {
+                    playSound('correct');
+                    triggerVictoryFireworks();
+                    totalScore += 50;
+                    updateScoreDisplay();
+
+                    feedbackBox.className = "p-4 rounded-2xl mb-6 text-sm font-extrabold border bg-emerald-100 border-emerald-400 text-emerald-950 block";
+                    feedbackBox.innerHTML = `🎉 <strong>XUẤT SẮC!</strong> Bạn đã nối chính xác 100% Bài 1!<br>
+                    1 - e: <strong>donate books</strong> (quyên góp sách)<br>
+                    2 - a: <strong>exchange used paper for notebooks</strong> (đổi giấy cũ lấy vở)<br>
+                    3 - d: <strong>water plants</strong> (tưới cây)<br>
+                    4 - c: <strong>pick up litter</strong> (nhặt rác)<br>
+                    5 - b: <strong>tutor primary students</strong> (dạy kèm học sinh tiểu học)`;
+                } else {
+                    playSound('incorrect');
+                    feedbackBox.className = "p-4 rounded-2xl mb-6 text-sm font-bold border bg-amber-100 border-amber-400 text-amber-950 block";
+                    feedbackBox.innerHTML = `💪 Bạn đã nối đúng <strong>${correctCount}/${ex1Data.length}</strong> đáp án. Hãy bấm "Làm lại Bài 1" để thử lại nhé!`;
+                }
+                feedbackBox.classList.remove('hidden');
+            }
+        }
+
+        function resetEx1() {
+            playSound('click');
+            ex1Matches = {};
+            selectedA = null;
+            document.getElementById('ex1-feedback-box').classList.add('hidden');
+            renderEx1();
+        }
+
+        /* ================= EXERCISE 2 LOGIC ================= */
+        function renderEx2() {
+            // Word Bank
+            const wordBank = document.getElementById('ex2-word-bank');
+            wordBank.innerHTML = '';
+            ex2Words.forEach(word => {
+                const chip = document.createElement('button');
+                chip.className = `px-4 py-2 rounded-xl font-black text-sm border-2 shadow-sm cursor-pointer transition ${
+                    selectedWordEx2 === word 
+                    ? 'bg-amber-400 border-amber-600 text-amber-950 scale-105 ring-2 ring-amber-300' 
+                    : 'bg-white border-amber-300 text-amber-900 hover:bg-amber-100'
+                }`;
+                chip.innerText = word;
+                chip.onclick = () => {
+                    playSound('click');
+                    selectedWordEx2 = (selectedWordEx2 === word) ? null : word;
+                    renderEx2();
+                };
+                wordBank.appendChild(chip);
+            });
+
+            // Sentences
+            const container = document.getElementById('ex2-sentences-container');
+            container.innerHTML = '';
+
+            ex2Sentences.forEach(s => {
+                const currentVal = ex2UserAnswers[s.id] || "";
+
+                const row = document.createElement('div');
+                row.className = "bg-white p-4 sm:p-5 rounded-2xl border-2 border-emerald-100 shadow-sm flex flex-col space-y-2";
+
+                row.innerHTML = `
+                    <div class="flex flex-wrap items-center text-base sm:text-lg font-bold text-gray-800 leading-relaxed">
+                        <span>${s.prefix}</span>
+                        <button onclick="applyWordToEx2(${s.id})" class="mx-1.5 px-3 py-1 rounded-xl border-2 border-dashed ${
+                            currentVal 
+                            ? 'border-emerald-500 bg-emerald-100 text-emerald-950 font-black' 
+                            : 'border-amber-400 bg-amber-50 text-gray-400 font-semibold'
+                        } transition cursor-pointer hover:bg-emerald-50 text-sm sm:text-base">
+                            ${currentVal ? currentVal : "[ Chạm để điền ]"}
+                        </button>
+                        <span>${s.suffix}</span>
+                    </div>
+                    <div class="text-xs font-semibold text-gray-500 italic">
+                        💡 Dịch: ${s.vi}
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function applyWordToEx2(sentenceId) {
+            playSound('click');
+            if (selectedWordEx2) {
+                ex2UserAnswers[sentenceId] = selectedWordEx2;
+            } else {
+                // Cycle through word choices if none selected
+                const current = ex2UserAnswers[sentenceId];
+                const curIdx = ex2Words.indexOf(current);
+                if (curIdx === -1) {
+                    ex2UserAnswers[sentenceId] = ex2Words[0];
+                } else if (curIdx === ex2Words.length - 1) {
+                    delete ex2UserAnswers[sentenceId];
+                } else {
+                    ex2UserAnswers[sentenceId] = ex2Words[curIdx + 1];
+                }
+            }
+            renderEx2();
+        }
+
+        function checkEx2Answers() {
+            initAudio();
+            let correctCount = 0;
+            const feedbackBox = document.getElementById('ex2-feedback-box');
+
+            ex2Sentences.forEach(s => {
+                if (ex2UserAnswers[s.id] === s.answer) {
+                    correctCount++;
+                }
+            });
+
+            if (correctCount === ex2Sentences.length) {
+                playSound('correct');
+                triggerVictoryFireworks();
+                totalScore += 50;
+                updateScoreDisplay();
+
+                feedbackBox.className = "p-4 rounded-2xl mb-6 text-sm font-extrabold border bg-emerald-100 border-emerald-400 text-emerald-950 block text-left space-y-1";
+                feedbackBox.innerHTML = `
+                    <div class="text-center text-base mb-2">🎉 <strong>HOÀN HẢO!</strong> Bạn đã làm đúng cả 5 câu trong Bài 2:</div>
+                    <div>1. We pick up <strong>litter</strong> at the local park every Sunday.</div>
+                    <div>2. Children in our village exchange <strong>used paper for notebooks</strong> every school year.</div>
+                    <div>3. Tom and his friends <strong>water</strong> the plants in their neighbourhood every weekend.</div>
+                    <div>4. We <strong>donate</strong> old textbooks to children in rural areas.</div>
+                    <div>5. Minh and his friends often <strong>tutor</strong> small children in their village.</div>
+                `;
+            } else {
+                playSound('incorrect');
+                feedbackBox.className = "p-4 rounded-2xl mb-6 text-sm font-bold border bg-amber-100 border-amber-400 text-amber-950 block text-center";
+                feedbackBox.innerHTML = `💪 Bạn đã đúng <strong>${correctCount}/${ex2Sentences.length}</strong> câu! Hãy kiểm tra lại các từ cần điền nhé!`;
+            }
+            feedbackBox.classList.remove('hidden');
+        }
+
+
+        /* ================= MODE SWITCHING ================= */
+        function switchMode(mode) {
+            initAudio();
+            const ex1View = document.getElementById('ex1-mode-view');
+            const ex2View = document.getElementById('ex2-mode-view');
+
+            const tabEx1 = document.getElementById('tab-ex1');
+            const tabEx2 = document.getElementById('tab-ex2');
+            const modeBadge = document.getElementById('mode-badge');
+
+            const activeClass = "px-5 py-2.5 rounded-2xl font-bold text-sm sm:text-base shadow-md transition transform active:scale-95 cursor-pointer bg-emerald-600 text-white border-2 border-emerald-500";
+            const inactiveClass = "px-5 py-2.5 rounded-2xl font-bold text-sm sm:text-base shadow-md transition transform active:scale-95 cursor-pointer bg-white text-emerald-800 border-2 border-emerald-200 hover:bg-emerald-50";
+
+            ex1View.classList.add('hidden');
+            ex2View.classList.add('hidden');
+
+            tabEx1.className = inactiveClass;
+            tabEx2.className = inactiveClass;
+
+            if (mode === 'ex1') {
+                ex1View.classList.remove('hidden');
+                tabEx1.className = activeClass;
+                modeBadge.innerText = "Chế độ: Bài 1 - Nối từ (Match)";
+            } else if (mode === 'ex2') {
+                ex2View.classList.remove('hidden');
+                tabEx2.className = activeClass;
+                modeBadge.innerText = "Chế độ: Bài 2 - Điền từ vào câu";
+                renderEx2();
+            }
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('score-display').innerText = totalScore;
+        }
+
+        /* ================= INITIALIZATION ================= */
+        window.onload = function() {
+            initSnow();
+            renderEx1();
+        };
+    </script>
+</body>
+</html>
